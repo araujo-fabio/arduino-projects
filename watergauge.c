@@ -6,6 +6,7 @@
 #define trig 11 //trigger
 #define echo 12 //receiver
 #define BB1 7 //botao
+#define BZ1 2 //buzzer
 
 //config do US
 void trigPuls ();
@@ -36,17 +37,26 @@ void loop() {
   
   EB1 = digitalRead(BB1);
   if(EB1 == HIGH) {
-    VV1 = (pulse / 255.0) * 100;
+    VV1 = dist_cm;
     long distmax = VV1;
     Serial.print("Distancia maxima calculada (em porcentagem):");
     Serial.println(VV1);
     delay(1000);
   }
+
+  int vmap = map(dist_cm, 0, VV1, 0, 100); 
+  Serial.print("vmap:");
+  Serial.println(vmap);
   
-  if(distmax >= 80) {
+  if(vmap <= 20) {
     //acionar buzzer
-    delay(1000);
+    Serial.println("Buzzer acionado");
+    tone(BZ1, 1000);       
+    delay(100);       
+  } else {
+    noTone(BZ1);
   }
+  delay(500);
 }
 
 void trigPuls()
@@ -55,4 +65,3 @@ void trigPuls()
   delayMicroseconds(10);
   digitalWrite(trig, LOW);
 }
-  
